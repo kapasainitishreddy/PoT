@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Braces, FileSpreadsheet, Package, Printer } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { PACKET_TYPES } from "@/lib/constants";
@@ -33,6 +33,9 @@ function PacketsInner() {
   const search = useSearchParams();
   const { cases, evidence, events, communications, subscription } = useStore();
   const [caseId, setCaseId] = useState(search.get("case") ?? "");
+  useEffect(() => {
+    if (!caseId && cases.length > 0) setCaseId(cases[0].id);
+  }, [cases.length, caseId]);
   const [packetType, setPacketType] = useState<PacketType>("police_prep");
   const [opts, setOpts] = useState<PacketOptions>(DEFAULT_OPTS);
   const [doc, setDoc] = useState<PacketDocument | null>(null);

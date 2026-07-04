@@ -27,7 +27,8 @@ export default function SettingsPage() {
 
   useEffect(() => setHasPin(pinIsSet()), []);
 
-  const activeCases = cases.filter((c) => !c.is_archived).length;
+  const activeCases = cases.filter((c) => !c.is_archived && !c.is_demo).length;
+  const realEvidence = evidence.filter((e) => !e.is_demo).length;
 
   return (
     <div>
@@ -67,7 +68,7 @@ export default function SettingsPage() {
           </p>
           <div className="space-y-4">
             <UsageMeter label="Active cases" used={activeCases} limit={plan.caseLimit} />
-            <UsageMeter label="Evidence items" used={evidence.length} limit={plan.evidenceLimit} />
+            <UsageMeter label="Evidence items" used={realEvidence} limit={plan.evidenceLimit} />
           </div>
         </div>
 

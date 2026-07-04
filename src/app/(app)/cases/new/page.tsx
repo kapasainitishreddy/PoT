@@ -10,7 +10,7 @@ import { useStore } from "@/lib/store";
 export default function NewCasePage() {
   const { cases, subscription } = useStore();
   const plan = getPlan(subscription.plan);
-  const active = cases.filter((c) => !c.is_archived).length;
+  const active = cases.filter((c) => !c.is_archived && !c.is_demo).length;
   const atLimit = plan.caseLimit != null && active >= plan.caseLimit;
 
   return (
@@ -22,12 +22,15 @@ export default function NewCasePage() {
       {atLimit ? (
         <div className="card p-6 text-center">
           <p className="font-semibold">
-            {plan.name} plan limit reached ({plan.caseLimit} active cases).
+            {plan.name} plan limit reached ({plan.caseLimit} active {plan.caseLimit === 1 ? "case" : "cases"}).
           </p>
           <p className="mt-1 text-sm text-muted">
-            Archive a resolved case or upgrade to keep going.
+            Demo cases don&apos;t count — only your real cases do. Archive a resolved case or upgrade to keep going.
           </p>
-          <Link href="/billing" className="btn-primary mt-4">Upgrade plan</Link>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Link href="/cases" className="btn-outline">View my cases</Link>
+            <Link href="/billing" className="btn-primary">Upgrade plan</Link>
+          </div>
         </div>
       ) : (
         <CaseForm />

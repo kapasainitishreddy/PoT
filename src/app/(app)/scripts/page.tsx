@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Copy, MessageSquareText, Save, Trash2 } from "lucide-react";
 import { deleteScript, saveScript, useStore } from "@/lib/store";
 import { useAppUser } from "@/lib/auth";
@@ -19,6 +19,9 @@ function ScriptsInner() {
   const { user } = useAppUser();
   const { cases, scripts } = useStore();
   const [caseId, setCaseId] = useState(search.get("case") ?? "");
+  useEffect(() => {
+    if (!caseId && cases.length > 0) setCaseId(cases[0].id);
+  }, [cases.length, caseId]);
   const [type, setType] = useState<ScriptType>("ask_update");
   const [tone, setTone] = useState<Tone>("professional");
   const [output, setOutput] = useState("");

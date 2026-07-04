@@ -24,6 +24,8 @@ export default function DashboardPage() {
   const plan = getPlan(subscription.plan);
 
   const activeCases = cases.filter((c) => !c.is_archived);
+  const realActiveCases = activeCases.filter((c) => !c.is_demo);
+  const realEvidence = evidence.filter((e) => !e.is_demo);
   const today = new Date().toISOString().slice(0, 10);
   const followUpsDue = activeCases.filter(
     (c) => c.follow_up_date && c.follow_up_date <= today
@@ -63,15 +65,15 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-3">
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div className="card p-5 lg:col-span-1">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="section-title">Plan &amp; usage</h2>
             <span className="pill border-gold/30 bg-gold/10 text-gold">{plan.name}</span>
           </div>
           <div className="space-y-4">
-            <UsageMeter label="Active cases" used={activeCases.length} limit={plan.caseLimit} />
-            <UsageMeter label="Evidence items" used={evidence.length} limit={plan.evidenceLimit} />
+            <UsageMeter label="Active cases" used={realActiveCases.length} limit={plan.caseLimit} />
+            <UsageMeter label="Evidence items" used={realEvidence.length} limit={plan.evidenceLimit} />
             <UsageMeter label="Storage" used={0} limit={null} />
           </div>
           <Link href="/billing" className="btn-outline mt-5 w-full">

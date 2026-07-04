@@ -31,7 +31,8 @@ export default function CasesPage() {
 
   const active = cases.filter((c) => !c.is_archived);
   const archivedCount = cases.length - active.length;
-  const atLimit = plan.caseLimit != null && active.length >= plan.caseLimit;
+  const realActive = active.filter((c) => !c.is_demo);
+  const atLimit = plan.caseLimit != null && realActive.length >= plan.caseLimit;
 
   const filtered = useMemo(() => {
     const text = q.trim().toLowerCase();

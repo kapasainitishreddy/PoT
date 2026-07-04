@@ -44,7 +44,7 @@ function NewEvidenceForm() {
   const [hashing, setHashing] = useState(false);
   const [error, setError] = useState("");
 
-  const atLimit = evidence.length >= plan.evidenceLimit;
+  const atLimit = evidence.filter((e) => !e.is_demo).length >= plan.evidenceLimit;
 
   const onFile = async (f: File | null) => {
     setFile(f);
