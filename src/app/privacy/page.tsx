@@ -34,9 +34,12 @@ export default function PrivacyPage() {
         </p>
         <h2 className="font-display text-lg font-semibold text-ivory">Your controls</h2>
         <p>
-          Settings lets you export all of your data as JSON and delete your
-          workspace data. An optional 4-digit app lock (stored only as a hash
-          on your device) adds a privacy screen on shared devices.
+          Settings lets you export all of your data as JSON. In local mode,
+          Delete local workspace permanently removes this browser&apos;s
+          ProofTimeline workspace data, local profile, and app-lock PIN. Cloud
+          account deletion is not enabled until the production Clerk,
+          Supabase, and private-storage deletion path is wired and verified end
+          to end.
         </p>
         <h2 className="font-display text-lg font-semibold text-ivory">Contact</h2>
         <p>

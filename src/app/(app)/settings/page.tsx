@@ -12,13 +12,14 @@ import {
 } from "lucide-react";
 import { useAppUser, clerkEnabled } from "@/lib/auth";
 import { clearDemoData, exportAllData, useStore } from "@/lib/store";
+import { removeLocalWorkspaceData } from "@/lib/local-data";
 import { getPlan } from "@/lib/plans";
 import { download } from "@/lib/packet";
 import { clearPin, pinIsSet, setPin } from "@/components/PinLock";
 import { Disclaimer, PageHeader, UsageMeter } from "@/components/ui";
 
 export default function SettingsPage() {
-  const { user } = useAppUser();
+  const { user, signOutLocal } = useAppUser();
   const { cases, evidence, subscription } = useStore();
   const plan = getPlan(subscription.plan);
   const [newPin, setNewPin] = useState("");
@@ -153,17 +154,46 @@ export default function SettingsPage() {
             >
               <Trash2 size={15} /> Remove demo data
             </button>
-            <button
-              className="btn-danger"
-              onClick={() =>
-                window.alert(
-                  "Account deletion: in cloud mode this removes your Clerk account and all Supabase rows. Coming with production setup."
-                )
-              }
-            >
-              <Trash2 size={15} /> Delete account
-            </button>
+            {!clerkEnabled ? (
+              <button
+                className="btn-danger"
+                onClick={() => {
+                  if (!user) return;
+                  const confirmed = window.confirm(
+                    "Permanently delete this local workspace from this browser? This removes all cases, evidence, inline files, timelines, scripts, the local profile, and the app PIN. This cannot be undone. Export your data first if you need a copy."
+                  );
+                  if (!confirmed) return;
+
+                  if (!removeLocalWorkspaceData(window.localStorage, user.id)) {
+                    window.alert(
+                      "ProofTimeline could not delete the local workspace. Your data was left in place."
+                    );
+                    return;
+                  }
+
+                  clearPin();
+                  signOutLocal();
+                  window.location.replace("/");
+                }}
+              >
+                <Trash2 size={15} /> Delete local workspace
+              </button>
+            ) : (
+              <button
+                className="btn-danger cursor-not-allowed opacity-60"
+                disabled
+                aria-disabled="true"
+                title="Cloud account deletion is not configured in this prototype"
+              >
+                <Trash2 size={15} /> Cloud deletion not configured
+              </button>
+            )}
           </div>
+          <p className="mt-3 text-xs text-muted">
+            {clerkEnabled
+              ? "Cloud account deletion is not wired in this prototype, so ProofTimeline does not claim that pressing a control will remove Clerk, Supabase, or storage records. Production deletion must be verified end to end before this control is enabled."
+              : "Delete local workspace removes this browser’s ProofTimeline data, local profile, and app-lock PIN. It does not affect exported copies you saved elsewhere."}
+          </p>
         </div>
       </div>
 
